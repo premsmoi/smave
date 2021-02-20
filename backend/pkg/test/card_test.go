@@ -11,14 +11,10 @@ func TestGenerateAllCards(t *testing.T) {
 	var generatedCardList = types.CardList{}
 	generatedCardList.GenerateAllCards()
 	expecetedLength := len(ExpectedCardList)
-	actualLength := len(generatedCardList.Cards)
+	actualLength := len(generatedCardList)
 
 	if expecetedLength != actualLength {
 		t.Error("Length is invalid. Expected:", expecetedLength, "Actual:", actualLength)
-	}
-
-	if generatedCardList.Type != types.NORMAL {
-		t.Error("CardList type is invalid. Expected:", types.NORMAL, "Actual:", generatedCardList.Type)
 	}
 
 	for _, card := range ExpectedCardList {
@@ -29,14 +25,74 @@ func TestGenerateAllCards(t *testing.T) {
 	}
 }
 
+// TestShuffle is exported
+func TestShuffle(t *testing.T) {
+	isChanged := false
+	var initialCardList = types.CardList{}
+	initialCardList.GenerateAllCards()
+	var shuffledCardList = types.CardList{}
+	shuffledCardList.GenerateAllCards()
+	shuffledCardList.Shuffle()
+
+	for i := 0; i < len(initialCardList); i++ {
+		if initialCardList[i] != shuffledCardList[i] {
+			isChanged = true
+		}
+	}
+
+	if isChanged == false {
+		t.Error("Shuffle method is not working. generatedCardList not changed.")
+	}
+}
+
+// TestRemove is exported
+func TestRemove(t *testing.T) {
+	cards := types.CardList{
+		{Rank: "A", Suit: "Clubs"},
+		{Rank: "4", Suit: "Spades"},
+		{Rank: "10", Suit: "Diamonds"}}
+	removedCard := cards.Remove(0)
+	expectedCard := types.Card{Rank: "A", Suit: "Clubs"}
+
+	if removedCard != expectedCard {
+		t.Error("Remove method is not working. Expected:", expectedCard, "Actual:", removedCard)
+	}
+
+	actualLenth := len(cards)
+	expectedLength := 2
+
+	if actualLenth != expectedLength {
+		t.Error("New length is invalid. Expected:", expectedLength, "Actual:", actualLenth)
+	}
+}
+
+// TestDraw is exported
+func TestDraw(t *testing.T) {
+	deck := types.CardList{
+		{Rank: "A", Suit: "Clubs"},
+		{Rank: "4", Suit: "Spades"},
+		{Rank: "10", Suit: "Diamonds"}}
+	drawnCard := deck.Draw()
+	expextedCard := types.Card{Rank: "10", Suit: "Diamonds"}
+
+	if drawnCard != expextedCard {
+		t.Error("Draw method is not working. Expected:", expextedCard, "Actual:", drawnCard)
+	}
+
+	actualLenth := len(deck)
+	expectedLength := 2
+
+	if actualLenth != expectedLength {
+		t.Error("New length is invalid. Expected:", expectedLength, "Actual:", actualLenth)
+	}
+}
+
 // TestFind1 is exported
 func TestFind1(t *testing.T) {
 	cardList := types.CardList{
-		Cards: []types.Card{
-			{Rank: "A", Suit: "Clubs"},
-			{Rank: "5", Suit: "Spades"},
-			{Rank: "6", Suit: "Diamonds"}},
-		Type: types.TRIPLE}
+		{Rank: "A", Suit: "Clubs"},
+		{Rank: "5", Suit: "Spades"},
+		{Rank: "6", Suit: "Diamonds"}}
 	card := types.Card{Rank: "A", Suit: "Clubs"}
 	i, res := cardList.Find(card)
 	if i != 0 || res == false {
@@ -47,11 +103,9 @@ func TestFind1(t *testing.T) {
 // TestFind2 is exported
 func TestFind2(t *testing.T) {
 	cardList := types.CardList{
-		Cards: []types.Card{
-			{Rank: "A", Suit: "Clubs"},
-			{Rank: "5", Suit: "Spades"},
-			{Rank: "6", Suit: "Diamonds"}},
-		Type: types.TRIPLE}
+		{Rank: "A", Suit: "Clubs"},
+		{Rank: "5", Suit: "Spades"},
+		{Rank: "6", Suit: "Diamonds"}}
 	card := types.Card{Rank: "A", Suit: "Spades"}
 	i, res := cardList.Find(card)
 	if i != -1 || res == true {
@@ -61,8 +115,8 @@ func TestFind2(t *testing.T) {
 
 // TestCanBeat1 is exported
 func TestCanBeat1(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "A", Suit: "Spades"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "A", Suit: "Hearts"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "A", Suit: "Spades"}}
+	cardListB := types.CardList{{Rank: "A", Suit: "Hearts"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -71,8 +125,8 @@ func TestCanBeat1(t *testing.T) {
 
 // TestCanBeat2 is exported
 func TestCanBeat2(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "2", Suit: "Spades"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "2", Suit: "Diamonds"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "2", Suit: "Spades"}}
+	cardListB := types.CardList{{Rank: "2", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -81,8 +135,8 @@ func TestCanBeat2(t *testing.T) {
 
 // TestCanBeat3 is exported
 func TestCanBeat3(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "3", Suit: "Spades"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "3", Suit: "Clubs"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "3", Suit: "Spades"}}
+	cardListB := types.CardList{{Rank: "3", Suit: "Clubs"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -91,8 +145,8 @@ func TestCanBeat3(t *testing.T) {
 
 // TestCanBeat4 is exported
 func TestCanBeat4(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "4", Suit: "Hearts"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "4", Suit: "Diamonds"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "4", Suit: "Hearts"}}
+	cardListB := types.CardList{{Rank: "4", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -101,8 +155,8 @@ func TestCanBeat4(t *testing.T) {
 
 // TestCanBeat5 is exported
 func TestCanBeat5(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "5", Suit: "Hearts"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "5", Suit: "Clubs"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "5", Suit: "Hearts"}}
+	cardListB := types.CardList{{Rank: "5", Suit: "Clubs"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -111,8 +165,8 @@ func TestCanBeat5(t *testing.T) {
 
 // TestCanBeat6 is exported
 func TestCanBeat6(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "6", Suit: "Diamonds"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "6", Suit: "Clubs"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "6", Suit: "Diamonds"}}
+	cardListB := types.CardList{{Rank: "6", Suit: "Clubs"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -121,8 +175,8 @@ func TestCanBeat6(t *testing.T) {
 
 // TestCanBeat7 is exported
 func TestCanBeat7(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "2", Suit: "Diamonds"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "3", Suit: "Diamonds"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "2", Suit: "Diamonds"}}
+	cardListB := types.CardList{{Rank: "3", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -131,8 +185,8 @@ func TestCanBeat7(t *testing.T) {
 
 // TestCanBeat8 is exported
 func TestCanBeat8(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "2", Suit: "Diamonds"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "3", Suit: "Spades"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "2", Suit: "Diamonds"}}
+	cardListB := types.CardList{{Rank: "3", Suit: "Spades"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -141,8 +195,8 @@ func TestCanBeat8(t *testing.T) {
 
 // TestCanBeat9 is exported
 func TestCanBeat9(t *testing.T) {
-	cardListA := types.CardList{Cards: []types.Card{{Rank: "4", Suit: "Diamonds"}}, Type: types.SINGLE}
-	cardListB := types.CardList{Cards: []types.Card{{Rank: "3", Suit: "Spades"}}, Type: types.SINGLE}
+	cardListA := types.CardList{{Rank: "4", Suit: "Diamonds"}}
+	cardListB := types.CardList{{Rank: "3", Suit: "Spades"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -152,16 +206,12 @@ func TestCanBeat9(t *testing.T) {
 // TestCanBeat10 is exported
 func TestCanBeat10(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "3", Suit: "Clubs"},
-			{Rank: "3", Suit: "Spades"}},
-		Type: types.COUPLE}
+		{Rank: "3", Suit: "Clubs"},
+		{Rank: "3", Suit: "Spades"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "3", Suit: "Diamonds"},
-			{Rank: "3", Suit: "Hearts"}},
-		Type: types.COUPLE}
+		{Rank: "3", Suit: "Diamonds"},
+		{Rank: "3", Suit: "Hearts"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -171,16 +221,12 @@ func TestCanBeat10(t *testing.T) {
 // TestCanBeat11 is exported
 func TestCanBeat11(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "2", Suit: "Clubs"},
-			{Rank: "2", Suit: "Diamonds"}},
-		Type: types.COUPLE}
+		{Rank: "2", Suit: "Clubs"},
+		{Rank: "2", Suit: "Diamonds"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "3", Suit: "Spades"},
-			{Rank: "3", Suit: "Hearts"}},
-		Type: types.COUPLE}
+		{Rank: "3", Suit: "Spades"},
+		{Rank: "3", Suit: "Hearts"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -190,16 +236,12 @@ func TestCanBeat11(t *testing.T) {
 // TestCanBeat12 is exported
 func TestCanBeat12(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "3", Suit: "Clubs"},
-			{Rank: "3", Suit: "Spades"},
-			{Rank: "3", Suit: "Diamonds"}},
-		Type: types.TRIPLE}
+		{Rank: "3", Suit: "Clubs"},
+		{Rank: "3", Suit: "Spades"},
+		{Rank: "3", Suit: "Diamonds"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "2", Suit: "Spades"}},
-		Type: types.SINGLE}
+		{Rank: "2", Suit: "Spades"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -209,18 +251,14 @@ func TestCanBeat12(t *testing.T) {
 // TestCanBeat13 is exported
 func TestCanBeat13(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "J", Suit: "Clubs"},
-			{Rank: "J", Suit: "Spades"},
-			{Rank: "J", Suit: "Diamonds"}},
-		Type: types.TRIPLE}
+		{Rank: "J", Suit: "Clubs"},
+		{Rank: "J", Suit: "Spades"},
+		{Rank: "J", Suit: "Diamonds"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "10", Suit: "Clubs"},
-			{Rank: "10", Suit: "Spades"},
-			{Rank: "10", Suit: "Diamonds"}},
-		Type: types.TRIPLE}
+		{Rank: "10", Suit: "Clubs"},
+		{Rank: "10", Suit: "Spades"},
+		{Rank: "10", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -230,18 +268,14 @@ func TestCanBeat13(t *testing.T) {
 // TestCanBeat14 is exported
 func TestCanBeat14(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "3", Suit: "Clubs"},
-			{Rank: "3", Suit: "Hearts"},
-			{Rank: "3", Suit: "Spades"},
-			{Rank: "3", Suit: "Diamonds"}},
-		Type: types.QUADRUPLE}
+		{Rank: "3", Suit: "Clubs"},
+		{Rank: "3", Suit: "Hearts"},
+		{Rank: "3", Suit: "Spades"},
+		{Rank: "3", Suit: "Diamonds"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "2", Suit: "Clubs"},
-			{Rank: "2", Suit: "Diamonds"}},
-		Type: types.COUPLE}
+		{Rank: "2", Suit: "Clubs"},
+		{Rank: "2", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
@@ -251,20 +285,16 @@ func TestCanBeat14(t *testing.T) {
 // TestCanBeat15 is exported
 func TestCanBeat15(t *testing.T) {
 	cardListA := types.CardList{
-		Cards: []types.Card{
-			{Rank: "A", Suit: "Clubs"},
-			{Rank: "A", Suit: "Hearts"},
-			{Rank: "A", Suit: "Spades"},
-			{Rank: "A", Suit: "Diamonds"}},
-		Type: types.QUADRUPLE}
+		{Rank: "A", Suit: "Clubs"},
+		{Rank: "A", Suit: "Hearts"},
+		{Rank: "A", Suit: "Spades"},
+		{Rank: "A", Suit: "Diamonds"}}
 
 	cardListB := types.CardList{
-		Cards: []types.Card{
-			{Rank: "K", Suit: "Clubs"},
-			{Rank: "K", Suit: "Hearts"},
-			{Rank: "K", Suit: "Spades"},
-			{Rank: "K", Suit: "Diamonds"}},
-		Type: types.QUADRUPLE}
+		{Rank: "K", Suit: "Clubs"},
+		{Rank: "K", Suit: "Hearts"},
+		{Rank: "K", Suit: "Spades"},
+		{Rank: "K", Suit: "Diamonds"}}
 
 	if cardListA.CanBeat(cardListB) == false {
 		t.Error("CanBeat method returned invalid value.")
