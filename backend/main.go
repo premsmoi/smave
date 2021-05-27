@@ -2,40 +2,48 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/premsmoi/smave/pkg/types"
 )
 
 func main() {
 	boardA := types.Board{}
+	boardA.GameCount = 1
 	boardA.AddPlayer(types.Player{Name: "Smoi", Role: types.People})
 	boardA.AddPlayer(types.Player{Name: "Ake", Role: types.People})
 	boardA.AddPlayer(types.Player{Name: "John", Role: types.People})
 	boardA.AddPlayer(types.Player{Name: "Park", Role: types.People})
+	boardA.InitiateDeck()
+	boardA.InitiateGame()
+	boardA.AutoPlayFirstGame()
 
-	deckA := boardA.Deck
-	deckA.GenerateAllCards()
-	deckA.Shuffle()
+	player := &boardA.Players[boardA.PlayerIndex]
 
-	for len(deckA) > 0 {
-		i := len(deckA) % 4
-		card := deckA.Draw()
-		boardA.Players[i].CardList = append(boardA.Players[i].CardList, card)
-		if (card == types.Card{Rank: "3", Suit: "Clubs"}) {
-			boardA.PlayingIndex = i
+	for boardA.IsOver == false {
+		if player.Pass || player.Complete {
+			player = boardA.NextPlayer()
+			continue
 		}
-	}
-
-	for i := 0; i < 4; i++ {
-		fmt.Println(boardA.Players[i])
-		if len(boardA.Players[i].CardList) != 13 {
-			fmt.Println("Starting cards on player", i, "is invalid")
+		if boardA.PlayingIndex == boardA.PlayerIndex {
+			fmt.Println("Next Round!!")
+			boardA.NextRound()
 		}
+
+		playableCardIndexList := player.FindPlayableCards(boardA.PlayingCards)
+
+		if len(playableCardIndexList) > 0 {
+			playableCardList := player.Play(playableCardIndexList)
+			boardA.PlayingCards = playableCardList
+			boardA.PlayingIndex = boardA.PlayerIndex
+			fmt.Println(player.Name, boardA.PlayingCards)
+			boardA.HaveCompleted(player)
+		} else {
+			player.Pass = true
+			fmt.Println(player.Name, "Pass!")
+		}
+
+		player = boardA.NextPlayer()
+		 time.Sleep(10000000)
 	}
-
-	// for boardA.IsOver == false {
-	// 	for i := 0; i < len(boardA.Players); i++ {
-
-	// 	}
-	// }
 }

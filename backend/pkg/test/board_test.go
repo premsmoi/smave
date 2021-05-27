@@ -108,3 +108,50 @@ func TestInitiateGame(t *testing.T) {
 	}
 
 }
+
+func TestNextPlayer(t *testing.T) {
+	board := types.Board{}
+
+	for i := 0; i < 4; i++ {
+		board.AddPlayer(types.Player{Name: "TestPlyer", Role: types.People})
+	}
+
+	actualPlayerIndex := board.PlayerIndex
+	expectedPlayerIndex := 0
+
+	if actualPlayerIndex != expectedPlayerIndex {
+		t.Error("Next player index is invalid. Expected:", expectedPlayerIndex, "Actual:", actualPlayerIndex)
+	}
+
+	board.NextPlayer()
+	actualPlayerIndex = board.PlayerIndex
+	expectedPlayerIndex = 1
+
+	if actualPlayerIndex != expectedPlayerIndex {
+		t.Error("Next player index is invalid. Expected:", expectedPlayerIndex, "Actual:", actualPlayerIndex)
+	}
+
+	board.NextPlayer()
+	actualPlayerIndex = board.PlayerIndex
+	expectedPlayerIndex = 2
+
+	if actualPlayerIndex != expectedPlayerIndex {
+		t.Error("Next player index is invalid. Expected:", expectedPlayerIndex, "Actual:", actualPlayerIndex)
+	}
+
+	board.NextPlayer()
+	actualPlayerIndex = board.PlayerIndex
+	expectedPlayerIndex = 3
+
+	if actualPlayerIndex != expectedPlayerIndex {
+		t.Error("Next player index is invalid. Expected:", expectedPlayerIndex, "Actual:", actualPlayerIndex)
+	}
+
+	board.NextPlayer()
+	actualPlayerIndex = board.PlayerIndex
+	expectedPlayerIndex = 0
+
+	if actualPlayerIndex != expectedPlayerIndex {
+		t.Error("Next player index is invalid. Expected:", expectedPlayerIndex, "Actual:", actualPlayerIndex)
+	}
+}

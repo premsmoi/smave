@@ -11,18 +11,6 @@ var RankList = [...]string{"3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K
 // SuitList is exprted
 var SuitList = [...]string{"Clubs", "Diamonds", "Hearts", "Spades"}
 
-// Card set type are exprted
-// const (
-// 	HAND      = "HAND"
-// 	DECK      = "DECK"
-// 	PLAYING   = "PLAYING"
-// 	PILE      = "PILE"
-// 	1    = "1"
-// 	2    = "2"
-// 	3    = "TRIPLE"
-// 	4 = "4"
-// )
-
 // Card is exported
 type Card struct {
 	Rank string

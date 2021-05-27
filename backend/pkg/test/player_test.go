@@ -80,3 +80,8 @@ func TestAddCard(t *testing.T) {
 		t.Error("New length is invalid. Expected:", expectedLength, "Actual:", actualLenth)
 	}
 }
+
+func TestFindPlayableCards(t *testing.T) {
+	// player := types.Player{}
+	// player.FindPlayableCards(2)
+}
